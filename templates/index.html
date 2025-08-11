@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hunter Goff</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        position: relative; /* Ensure absolute children are positioned relative to body */
+      }
+      .highlight {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 230, 0, 0.7) 0%,
+          rgba(255, 204, 0, 0.9) 100%
+        ); /* Vibrant highlighter gradient */
+        padding: 2px 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        position: relative;
+        z-index: 1;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+      }
+      .highlight::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 230, 0, 0.3) 0%,
+          transparent 70%
+        );
+        z-index: -1;
+        border-radius: 6px;
+      }
+      .version-tag {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        font-size: 12px;
+        color: #555;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+      .version-tag:hover {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="text-4xl md:text-5xl font-light tracking-wide text-center">
+      This is the personal website of
+      <span class="highlight font-medium">Hunter Goff</span>.
+    </h1>
+    <div class="version-tag">{{ .Version }} / commit: {{ .Commit }}</div>
+  </body>
+</html>

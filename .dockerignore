@@ -1,0 +1,9 @@
+# Ignore build artifacts
+bin/
+# Ignore Git metadata
+.git/
+# Ignore IDE files
+.idea/
+.vscode/
+# Ignore temporary files
+*.log
