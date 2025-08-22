@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -11,6 +10,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/hfgoff/huntergoff/logging"
 	"github.com/movieofthenight/go-streaming-availability/v4"
 )
 
@@ -36,10 +36,12 @@ type PageData struct {
 	Commit  string
 }
 
+var (
+	streamingTmpl = template.Must(template.ParseFiles("templates/streaming.html"))
+)
+
 func main() {
 	var cfg config
-
-	tmpl := template.Must(template.ParseFiles("templates/streaming.html"))
 
 	flag.IntVar(&cfg.port, "port", 8080, "port")
 	flag.StringVar(&cfg.version, "version", "(devel)", "version number")
@@ -73,7 +75,9 @@ func main() {
 			Country("us").
 			Execute()
 		if err != nil {
-			log.Fatal(err)
+			slog.Error("error searching shows", logging.Error(err))
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
 		}
 
 		var page []Result
@@ -99,8 +103,10 @@ func main() {
 			Shows:   page,
 		}
 
-		if err := tmpl.Execute(w, data); err != nil {
-			http.Error(w, "template execution error", http.StatusInternalServerError)
+		if err := streamingTmpl.Execute(w, data); err != nil {
+			slog.Error("error executing streaming template", logging.Error(err))
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
 		}
 	})
 
@@ -115,6 +121,6 @@ func main() {
 	}
 
 	if err := srv.ListenAndServe(); err != nil {
-		slog.Error("server error", "error", err.Error())
+		slog.Error("server error", logging.Error(err))
 	}
 }
