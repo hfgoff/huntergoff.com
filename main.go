@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"runtime/debug"
 	"strconv"
 	"text/template"
 	"time"
@@ -42,10 +43,18 @@ func main() {
 
 	flag.IntVar(&cfg.port, "port", 8080, "port")
 	flag.StringVar(&cfg.version, "version", "(devel)", "version number")
-	flag.StringVar(&cfg.commit, "commit", "(uunknown)", "commit hash")
 	flag.StringVar(&cfg.rapidApikey, "rapidapikey", os.Getenv("RAPID_API_KEY"), "RapidAPI Key")
 
 	flag.Parse()
+
+	if info, ok := debug.ReadBuildInfo(); ok {
+		cfg.version = "(devel)"
+		for _, s := range info.Settings {
+			if s.Key == "vcs.revision" {
+				cfg.version = s.Value
+			}
+		}
+	}
 
 	mux := http.NewServeMux()
 
